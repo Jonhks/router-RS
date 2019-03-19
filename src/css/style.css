@@ -1,35 +1,36 @@
-*{
+* {
   margin: 0;
   padding: 0
 }
 
-.mi-nav{
+.mi-nav {
   background-color: black;
 }
 
-.top{
+.top {
   margin-top: 10vh;
 }
 
 .logo {
-  margin-top: 30%; 
+  margin-top: 30%;
 }
 
-.mi-btn{
+.mi-btn {
   width: 90%;
   background: #FEE522;
   color: black;
 }
 
-.register{
+.register {
   margin: 8% 8%;
 }
 
-#register, #login-text{
+#register,
+#login-text {
   cursor: pointer;
 }
 
-.hide{
+.hide {
   display: none;
 }
 
@@ -40,24 +41,38 @@
   background-size: cover;
 } */
 
-.mi-carr{
+.mi-carr {
   margin-top: -20%;
   height: 62vh;
 }
 
-.muro{
+.muro {
   background: black;
 }
 
-.t-area{
+.t-area {
   color: white
 }
 
-.modal-style{
+.modal-style {
   width: 100%;
   height: 60vh;
 }
-iframe{
+
+iframe {
   margin-left: -7%;
 
+}
+
+.hide {
+  display: none;
+}
+
+.block {
+  display: block !important;
+}
+
+#img-user img{
+  width: 40px;
+  vertical-align: middle;
 }
