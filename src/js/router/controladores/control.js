@@ -56,6 +56,7 @@ libreria.controlador('contacto', {
     ui.start('#firebaseui-auth-container', uiConfig);
     var user = firebase.auth().currentUser;
     if (user) {
+      console.log('hay usuario')
       location.href.replace(location.href = `${ubicacion}#/muro`)
     } else {
       console.log('No hay usuario activo')
@@ -73,6 +74,12 @@ libreria.controlador('contacto', {
     const loginA = document.getElementById('loginA')
     const hamburguesa = document.getElementById('hamburguesa')
     const muro = document.getElementById('muro')
+    const sendButton = document.getElementById('send-button')
+    const textarea2 = document.getElementById('textarea2')
+    const printBox = document.getElementById('printBox')
+
+
+
 
     imgUser.classList.remove('hide')
     nameUser.classList.remove('hide')
@@ -90,7 +97,6 @@ libreria.controlador('contacto', {
         .catch(error => console.error(error, ' algo salió mal'))
     }
     const printNav = () => {
-      console.log(userLS)
       let str = `
         <li>
         <div id="perfil" class="user-view mi-nav">
@@ -122,12 +128,70 @@ libreria.controlador('contacto', {
     console.log('estas en el muro')
     var user = firebase.auth().currentUser;
     if (user) {
-
-      console.log(user)
+      console.log('hay usuario en el muro')
     } else {
       location.href.replace(location.href = `${ubicacion}/`)
       console.log('No hay usuario activo')
     }
+
+    const progress = document.getElementById('progress')
+    const content = document.getElementById('content')
+
+    setTimeout(() => {
+      progress.classList.add('hide')
+      content.classList.remove('hide')
+
+    }, 200)
+
+    // ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' Firestore
+
+ 
+
+    var db = firebase.firestore();
+    const daFunct = () => {
+      // var pruebaRef = db.collection('users').doc('alovelace');
+      // date: firebase.firestore.Timestamp.fromDate(new Date())
+      // pruebaRef.set({
+      //   prueba: "3"
+      // })
+      db.collection("users").add({
+          name: userLS.displayName,
+          email: userLS.email,
+          photo: userLS.photoURL,
+          id: userLS.uid,
+          msj: textarea2.value,
+          date: new Date(),
+          user: userLS,
+          likes: 0
+        })
+        .then(function (docRef) {
+          M.toast({html: 'Mensaje enviado!'})
+          console.log("Document written with ID: ", docRef.id);
+        })
+        .catch(function (error) {
+          console.error("Error adding document: ", error);
+        });
+        textarea2.value = ''
+    }
+    const postPublications = db.collection('users').orderBy('date', "desc")
+
+    postPublications.onSnapshot(function (doc) {
+      db.collection("users").get().then((querySnapshot) => {
+        newData = []
+        querySnapshot.forEach((doc) => {
+           newData.push(doc.data())
+          });
+          window.myFirebase.baseDD(newData, printBox)
+        });
+    });
+
+    sendButton.addEventListener('click', daFunct)
+
+
+
+
+
+
   }, // cierre de muro 
 
 })

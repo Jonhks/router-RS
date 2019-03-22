@@ -51,7 +51,7 @@
 }
 
 .t-area {
-  color: white
+  color: black
 }
 
 .modal-style {
@@ -76,3 +76,12 @@ iframe {
   width: 40px;
   vertical-align: middle;
 }
+
+
+
+.mi-circle{
+  width: 7%;
+  margin: 0;
+  padding: 0
+}
+
