@@ -21,7 +21,7 @@ window.myFirebase = {
                 <a class="waves-effect waves-light btn"><i class="material-icons center">mode_edit</i></a>
               </span>
               <span>
-                <a class="waves-effect waves-dark btn "><i class="material-icons center">delete</i></a>
+                <a class="waves-effect waves-dark btn "><i class="material-icons center btn-delete">delete</i></a>
               </span>
             </span>
           </div>
@@ -30,5 +30,24 @@ window.myFirebase = {
     </div>`
     });
     printBox.innerHTML = str
+   const btnDelete = document.getElementsByClassName('btn-delete')
+    return btnDelete
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

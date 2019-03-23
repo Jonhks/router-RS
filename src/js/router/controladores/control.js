@@ -145,7 +145,7 @@ libreria.controlador('contacto', {
 
     // ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' Firestore
 
- 
+
 
     var db = firebase.firestore();
     const daFunct = () => {
@@ -162,32 +162,110 @@ libreria.controlador('contacto', {
           msj: textarea2.value,
           date: new Date(),
           user: userLS,
-          likes: 0
+          likes: 0,
+          idMsj: ''
         })
         .then(function (docRef) {
-          M.toast({html: 'Mensaje enviado!'})
+          M.toast({
+            html: 'Mensaje enviado!'
+          })
           console.log("Document written with ID: ", docRef.id);
         })
         .catch(function (error) {
           console.error("Error adding document: ", error);
         });
-        textarea2.value = ''
+      textarea2.value = ''
     }
     const postPublications = db.collection('users').orderBy('date', "desc")
 
     postPublications.onSnapshot(function (doc) {
-      db.collection("users").get().then((querySnapshot) => {
-        newData = []
+      db.collection("users").onSnapshot((querySnapshot) => {
+        // newData = []
+        let str = ''
         querySnapshot.forEach((doc) => {
-           newData.push(doc.data())
-          });
-          window.myFirebase.baseDD(newData, printBox)
+          // console.log(`${doc.id} => ${doc.data()}`)
+          let post = doc.data()
+          str += `
+          <div class="row ">
+          <div class="col s12 m6 offset-m3">
+            <div class="card z-depth-5 ">
+              <a ><img class="circle left mi-circle" src="${post.photo}"></a>
+              <div class="card-content mi-card ">
+                <h5 class="card-title">${post.name}</h5>
+                <hr>
+                </div>
+                <h3>${post.msj}</h3>
+              <div class="card-action">
+                <span class="left">${post.date}</span>
+                <span class="center">
+                  <a class="waves-effect waves-light btn"><i class="material-icons center">thumb_up</i></a>${post.likes}</span>
+                <span class="right">
+                  <span>
+                    <a class="waves-effect waves-light btn"><i id="${doc.id}"  class="material-icons center btn-edit" data-msj="${post.msj}" >mode_edit</i></a>
+                  </span>
+                  <span>
+                    <a class="waves-effect waves-dark btn "><i id="${doc.id}" class="material-icons center btn-delete">delete</i></a>
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>`
+
+          // newData.push(doc.data())
         });
+        printBox.innerHTML = str
+
+        // console.log(newData)
+        // const btnDelete = window.myFirebase.baseDD(newData, printBox)
+        const btnDelete = document.getElementsByClassName('btn-delete')
+        const btnEdit = document.getElementsByClassName('btn-edit')
+
+        for (let i = 0; i < btnDelete.length; i++) {
+          btnDelete[i].addEventListener('click', () => {
+            const idBtn = btnDelete[i].id
+            funDelete(idBtn)
+          })
+        }
+        for (let i = 0; i < btnEdit.length; i++) {
+          btnEdit[i].addEventListener('click', () => {
+            const idBtn = btnEdit[i].id
+            const msj = btnEdit[i].dataset.msj
+            funEdit(idBtn, msj)
+          })
+        }
+      });
     });
 
     sendButton.addEventListener('click', daFunct)
 
 
+
+ const funDelete = (id) => {
+  db.collection("users").doc(id).delete().then(function () {
+    console.log("Document successfully deleted!");
+  }).catch(function (error) {
+    console.error("Error removing document: ", error);
+  });
+ }
+
+ const funEdit = (id, msj) => {
+   document.getElementById(textarea2).value = msj
+  //  console.log(msj)
+  var refEdit = db.collection("users").doc(id);
+
+  // Set the "capital" field of the city 'DC'
+  return refEdit.update({
+    msj:msj,
+  })
+  .then(function() {
+      console.log("Document successfully updated!");
+  })
+  .catch(function(error) {
+      // The document probably doesn't exist.
+      console.error("Error updating document: ", error);
+  });
+ }
 
 
 
