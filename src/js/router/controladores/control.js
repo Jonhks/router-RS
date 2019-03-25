@@ -78,7 +78,13 @@ libreria.controlador('contacto', {
     const textarea2 = document.getElementById('textarea2')
     const printBox = document.getElementById('printBox')
 
-
+    textarea2.addEventListener('keyup', () => {
+      if(textarea2.value.length > 0 ){
+        sendButton.removeAttribute('disabled')
+      }else if(textarea2.value.length <= 0 ) {
+        sendButton.setAttribute('disabled', true)
+      }
+    })
 
 
     imgUser.classList.remove('hide')
@@ -149,6 +155,12 @@ libreria.controlador('contacto', {
 
     var db = firebase.firestore();
     const daFunct = () => {
+      // console.log(textarea2.value.length)
+      if (textarea2.value.length === 0) {
+        M.toast({
+          html: 'Ingresa algun mensaje!'
+        })
+      }
       // var pruebaRef = db.collection('users').doc('alovelace');
       // date: firebase.firestore.Timestamp.fromDate(new Date())
       // pruebaRef.set({
@@ -241,35 +253,40 @@ libreria.controlador('contacto', {
 
 
 
- const funDelete = (id) => {
-  db.collection("users").doc(id).delete().then(function () {
-    console.log("Document successfully deleted!");
-  }).catch(function (error) {
-    console.error("Error removing document: ", error);
-  });
- }
+    const funDelete = (id) => {
+      db.collection("users").doc(id).delete().then(function () {
+        M.toast({
+          html: 'Mensaje eliminado!'
+        })
+        console.log("Document successfully deleted!");
+      }).catch(function (error) {
+        console.error("Error removing document: ", error);
+      });
+    }
 
- const funEdit = (id, msj) => {
-   document.getElementById(textarea2).value = msj
-  //  console.log(msj)
-  var refEdit = db.collection("users").doc(id);
+    const funEdit = (id, msj) => {
+      document.getElementById('text-ocultar').style.display = 'none'
+      document.getElementById('textarea2').value = msj
+      console.log(msj)
+      var refEdit = db.collection("users").doc(id);
 
-  // Set the "capital" field of the city 'DC'
-  return refEdit.update({
-    msj:msj,
-  })
-  .then(function() {
-      console.log("Document successfully updated!");
-  })
-  .catch(function(error) {
-      // The document probably doesn't exist.
-      console.error("Error updating document: ", error);
-  });
- }
+      // Set the "capital" field of the city 'DC'
+      return refEdit.update({
+          msj: msj,
+        })
+        .then(function () {
+          console.log("Document successfully updated!");
+        })
+        .catch(function (error) {
+          // The document probably doesn't exist.
+          console.error("Error updating document: ", error);
+        });
+    }
 
 
 
 
-  }, // cierre de muro 
+  }, // cierre de muro Génova No. 59 - Juárez 
+
 
 })
