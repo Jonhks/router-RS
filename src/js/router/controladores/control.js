@@ -41,7 +41,7 @@ libreria.controlador('contacto', {
         }
       },
       signInFlow: 'popup',
-      signInSuccessUrl: `${ubicacion}`,
+      signInSuccessUrl: `${ubicacion}muro`,
       signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.FacebookAuthProvider.PROVIDER_ID,
@@ -57,7 +57,7 @@ libreria.controlador('contacto', {
     var user = firebase.auth().currentUser;
     if (user) {
       console.log('hay usuario')
-      location.href.replace(location.href = `${ubicacion}#/muro`)
+      location.href.replace(location.href = `${ubicacion}muro`)
     } else {
       console.log('No hay usuario activo')
     }
