@@ -5,4 +5,4 @@ window.libreria.getId('vista').enrutar()
   .ruta('/muro', './muro.html', 'contacto', function(){
     libreria.getCtrl().muro()
   })
-  .ruta('/perfil', './perfil.html', 'contacto', null)
+  .ruta('/perfil-nav', './perfil-nav.html', 'contacto', null)

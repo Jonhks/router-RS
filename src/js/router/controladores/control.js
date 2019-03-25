@@ -121,7 +121,7 @@ libreria.controlador('contacto', {
         <li>
         <div class="divider"></div>
         </li>
-        <li><a class="waves-effect" href="#!">Perfil</a></li>`
+        <li id="perfil-nav" ><a href="#/perfil-nav">Perfil</a></li>`
       miNav.innerHTML = str
       imgUser.innerHTML = `<img class="circle" src="${userLS.photoURL}" width="30"></img>`
       nameUser.innerHTML = `<a>${userLS.displayName}</a>`
