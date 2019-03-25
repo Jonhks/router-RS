@@ -75,13 +75,15 @@ libreria.controlador('contacto', {
     const hamburguesa = document.getElementById('hamburguesa')
     const muro = document.getElementById('muro')
     const sendButton = document.getElementById('send-button')
+    const editButton = document.getElementById('edit-button')
     const textarea2 = document.getElementById('textarea2')
     const printBox = document.getElementById('printBox')
 
+
     textarea2.addEventListener('keyup', () => {
-      if(textarea2.value.length > 0 ){
+      if (textarea2.value.length > 0) {
         sendButton.removeAttribute('disabled')
-      }else if(textarea2.value.length <= 0 ) {
+      } else if (textarea2.value.length <= 0) {
         sendButton.setAttribute('disabled', true)
       }
     })
@@ -156,11 +158,6 @@ libreria.controlador('contacto', {
     var db = firebase.firestore();
     const daFunct = () => {
       // console.log(textarea2.value.length)
-      if (textarea2.value.length === 0) {
-        M.toast({
-          html: 'Ingresa algun mensaje!'
-        })
-      }
       // var pruebaRef = db.collection('users').doc('alovelace');
       // date: firebase.firestore.Timestamp.fromDate(new Date())
       // pruebaRef.set({
@@ -175,7 +172,6 @@ libreria.controlador('contacto', {
           date: new Date(),
           user: userLS,
           likes: 0,
-          idMsj: ''
         })
         .then(function (docRef) {
           M.toast({
@@ -210,7 +206,7 @@ libreria.controlador('contacto', {
               <div class="card-action">
                 <span class="left">${post.date}</span>
                 <span class="center">
-                  <a class="waves-effect waves-light btn"><i class="material-icons center">thumb_up</i></a>${post.likes}</span>
+                  <a class="waves-effect waves-light btn"><i id="${doc.id}"  class="material-icons center btn-likes" data-likes="${post.likes}" >thumb_up</i></a>${post.likes}</span>
                 <span class="right">
                   <span>
                     <a class="waves-effect waves-light btn"><i id="${doc.id}"  class="material-icons center btn-edit" data-msj="${post.msj}" >mode_edit</i></a>
@@ -232,6 +228,8 @@ libreria.controlador('contacto', {
         // const btnDelete = window.myFirebase.baseDD(newData, printBox)
         const btnDelete = document.getElementsByClassName('btn-delete')
         const btnEdit = document.getElementsByClassName('btn-edit')
+        const btnLikes = document.getElementsByClassName('btn-likes')
+
 
         for (let i = 0; i < btnDelete.length; i++) {
           btnDelete[i].addEventListener('click', () => {
@@ -246,6 +244,13 @@ libreria.controlador('contacto', {
             funEdit(idBtn, msj)
           })
         }
+        for (let i = 0; i < btnLikes.length; i++) {
+          btnLikes[i].addEventListener('click', () => {
+            const idBtn = btnLikes[i].id
+            const likes = parseInt(btnLikes[i].dataset.likes)
+            funcLikes(idBtn, likes)
+          })
+        }
       });
     });
 
@@ -256,7 +261,7 @@ libreria.controlador('contacto', {
     const funDelete = (id) => {
       db.collection("users").doc(id).delete().then(function () {
         M.toast({
-          html: 'Mensaje eliminado!'
+          html: `Mensaje eliminado con éxito!`
         })
         console.log("Document successfully deleted!");
       }).catch(function (error) {
@@ -266,27 +271,43 @@ libreria.controlador('contacto', {
 
     const funEdit = (id, msj) => {
       document.getElementById('text-ocultar').style.display = 'none'
+      editButton.classList.remove('hide')
+      sendButton.classList.add('hide')
       document.getElementById('textarea2').value = msj
-      console.log(msj)
-      var refEdit = db.collection("users").doc(id);
 
-      // Set the "capital" field of the city 'DC'
+      var refEdit = db.collection("users").doc(id);
+      editButton.addEventListener('click', () => {
+        let msjEditado = textarea2.value
+        return refEdit.update({
+            msj: msjEditado,
+            date: new Date(),
+          })
+          .then(function () {
+            editButton.classList.add('hide')
+            sendButton.classList.remove('hide')
+            textarea2.value = ''
+            M.toast({
+              html: `Mensaje editado con éxito!`
+            })
+            console.log("Document successfully updated!");
+          })
+          .catch(function (error) {
+            // The document probably doesn't exist.
+            console.error("Error updating document: ", error);
+          });
+      })
+    }
+
+    const funcLikes  = (id, like) => {
+      var refEdit = db.collection("users").doc(id);
       return refEdit.update({
-          msj: msj,
-        })
-        .then(function () {
-          console.log("Document successfully updated!");
-        })
-        .catch(function (error) {
-          // The document probably doesn't exist.
-          console.error("Error updating document: ", error);
-        });
+        likes: like += 1,
+      })
     }
 
 
 
-
-  }, // cierre de muro Génova No. 59 - Juárez 
+  }, // cierre de muro
 
 
 })
