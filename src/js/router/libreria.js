@@ -7,7 +7,6 @@ var inicio = function () {
     libreria = {
       getId: function (id) {
         elemento = document.getElementById(id)
-        console.log(id)
         return this
       },
       get: function (id) {
@@ -44,7 +43,6 @@ var inicio = function () {
           destino = rutas[hash],
           xhr = new XMLHttpRequest()
         if (destino && destino.plantilla) {
-          console.log(destino)
           if (destino.controlador) {
             ctrlActual = controladores[destino.controlador].controlador
           }

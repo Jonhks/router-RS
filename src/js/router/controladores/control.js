@@ -63,7 +63,7 @@ libreria.controlador('contacto', {
     }
   },
 
-
+// --------------------------------------------------------------------------MURO
   muro: () => {
     const ubicacion = location.href
     const userLS = JSON.parse(localStorage.getItem('user'))
@@ -94,7 +94,7 @@ libreria.controlador('contacto', {
     loginA.classList.add('hide')
     hamburguesa.classList.add('block')
     logout.classList.remove('hide')
-    muro.classList.add('hide')
+    // muro.classList.add('hide')
 
     const funLogOut = () => {
       firebase.auth().signOut()
@@ -309,5 +309,25 @@ libreria.controlador('contacto', {
 
   }, // cierre de muro
 
+  perfil: () => {
+    const ubicacion = location.href
+    
+    console.log('estas en el perfil')
+    var user = firebase.auth().currentUser;
+    if (user) {
+      console.log('hay usuario en el muro')
+    } else {
+      location.href.replace(location.href = `${ubicacion}/`)
+      console.log('No hay usuario activo')
+    }
 
+
+    setTimeout(() => {
+      progress.classList.add('hide')
+      content.classList.remove('hide')
+
+    }, 200)
+
+
+  } // cierre de perfil
 })
