@@ -33,7 +33,12 @@ libreria.controlador('contacto', {
       callbacks: {
         signInSuccessWithAuthResult: function (authResult, redirectUrl) {
           console.log('estas en el login arriba');
-          localStorage.setItem('user', JSON.stringify(authResult.user))
+          if (authResult.photoURL === undefined) {
+            authResult.photoURL = "../img/octo.jpeg"
+            localStorage.setItem('user', JSON.stringify(authResult.user))
+          } else {
+            localStorage.setItem('user', JSON.stringify(authResult.user))
+          }
           return true;
         },
         uiShown: function () {
@@ -41,7 +46,7 @@ libreria.controlador('contacto', {
         }
       },
       signInFlow: 'popup',
-      signInSuccessUrl: `${ubicacion}muro`,
+      signInSuccessUrl: `${ubicacion}#/muro`,
       signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.FacebookAuthProvider.PROVIDER_ID,
@@ -63,7 +68,7 @@ libreria.controlador('contacto', {
     }
   },
 
-// --------------------------------------------------------------------------MURO
+  // --------------------------------------------------------------------------MURO
   muro: () => {
     const ubicacion = location.href
     const userLS = JSON.parse(localStorage.getItem('user'))
@@ -116,7 +121,7 @@ libreria.controlador('contacto', {
         <a href="#email"><span class="white-text email">${userLS.email}</span></a>
         </div>
         </li>
-        <li><a href="#!"><i class="material-icons"></i>Hola ${userLS.displayName} <span id="name"></span></a></li>
+        <li><a><i class="material-icons"></i>Hola ${userLS.displayName} <span id="name"></span></a></li>
         <li id="log-out2"><a>Logout</a></li>
         <li>
         <div class="divider"></div>
@@ -191,34 +196,57 @@ libreria.controlador('contacto', {
         // newData = []
         let str = ''
         querySnapshot.forEach((doc) => {
-          // console.log(`${doc.id} => ${doc.data()}`)
+          // console.log(`${userLS.uid} => ${doc.data().user.uid}`)
           let post = doc.data()
-          str += `
-          <div class="row ">
-          <div class="col s12 m6 offset-m3">
-            <div class="card z-depth-5 ">
-              <a ><img class="circle left mi-circle" src="${post.photo}"></a>
-              <div class="card-content mi-card ">
-                <h5 class="card-title">${post.name}</h5>
-                <hr>
+          if (userLS.uid === doc.data().user.uid) {
+            str += `
+            <div class="row ">
+            <div class="col s12 m6 offset-m3">
+              <div class="card z-depth-5 ">
+                <a ><img class="circle left mi-circle" src="${post.photo}"></a>
+                <div class="card-content mi-card ">
+                  <h5 class="card-title">${post.name}</h5>
+                  <hr>
+                  </div>
+                  <h3>${post.msj}</h3>
+                <div class="card-action">
+                  <span class="left">${post.date}</span>
+                  <span class="center">
+                    <a class="waves-effect waves-light btn"><i id="${doc.id}"  class="material-icons center btn-likes" data-likes="${post.likes}" >thumb_up</i></a>${post.likes}</span>
+                  <span class="right">
+                    <span>
+                      <a class="waves-effect waves-light btn"><i id="${doc.id}"  class="material-icons center btn-edit" data-msj="${post.msj}" >mode_edit</i></a>
+                    </span>
+                    <span>
+                      <a class="waves-effect waves-dark btn "><i id="${doc.id}" class="material-icons center btn-delete">delete</i></a>
+                    </span>
+                  </span>
                 </div>
-                <h3>${post.msj}</h3>
-              <div class="card-action">
-                <span class="left">${post.date}</span>
-                <span class="center">
-                  <a class="waves-effect waves-light btn"><i id="${doc.id}"  class="material-icons center btn-likes" data-likes="${post.likes}" >thumb_up</i></a>${post.likes}</span>
-                <span class="right">
-                  <span>
-                    <a class="waves-effect waves-light btn"><i id="${doc.id}"  class="material-icons center btn-edit" data-msj="${post.msj}" >mode_edit</i></a>
-                  </span>
-                  <span>
-                    <a class="waves-effect waves-dark btn "><i id="${doc.id}" class="material-icons center btn-delete">delete</i></a>
-                  </span>
-                </span>
               </div>
             </div>
-          </div>
-        </div>`
+          </div>`
+          } else {
+            str += `
+            <div class="row ">
+            <div class="col s12 m6 offset-m3">
+              <div class="card z-depth-5 ">
+                <a ><img class="circle left mi-circle" src="${post.photo}"></a>
+                <div class="card-content mi-card ">
+                  <h5 class="card-title">${post.name}</h5>
+                  <hr>
+                  </div>
+                  <h3>${post.msj}</h3>
+                <div class="card-action">
+                  <span class="left">${post.date}</span>
+                  <span class="center">
+                    <a class="waves-effect waves-light btn"><i id="${doc.id}"  class="material-icons center btn-likes" data-likes="${post.likes}" >thumb_up</i></a>${post.likes}</span>
+                  <span class="right">
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>`
+          }
 
           // newData.push(doc.data())
         });
@@ -298,7 +326,7 @@ libreria.controlador('contacto', {
       })
     }
 
-    const funcLikes  = (id, like) => {
+    const funcLikes = (id, like) => {
       var refEdit = db.collection("users").doc(id);
       return refEdit.update({
         likes: like += 1,
@@ -310,8 +338,15 @@ libreria.controlador('contacto', {
   }, // cierre de muro
 
   perfil: () => {
+    const boxPerfil = document.getElementById('content-perfil')
+    const userLS = JSON.parse(localStorage.getItem('user'))
+
+
+
     const ubicacion = location.href
-    
+    logout.classList.remove('hide')
+    hamburguesa.classList.add('hide')
+
     console.log('estas en el perfil')
     var user = firebase.auth().currentUser;
     if (user) {
@@ -324,9 +359,97 @@ libreria.controlador('contacto', {
 
     setTimeout(() => {
       progress.classList.add('hide')
-      content.classList.remove('hide')
+      boxPerfil.classList.remove('hide')
 
     }, 200)
+
+    const funLogOut = () => {
+      firebase.auth().signOut()
+        .then(() => {
+          console.log('Usuario salio con exito')
+          location.href.replace(location.href = `${ubicacion}/`)
+        })
+        .catch(error => console.error(error, ' algo salió mal'))
+    }
+
+    var db = firebase.firestore();
+    const postPublications = db.collection('users').orderBy('date', "desc")
+    postPublications.onSnapshot(function (doc) {
+      db.collection("users").onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // console.log(`${doc.data().user} => ${doc.data().user.uid}`)
+          let userData = doc.data().user.uid
+          let userLocS = userLS.uid
+          let id = doc.id
+          if (userData === userLocS) {
+            boxPerfil.innerHTML = `
+            <div class="col m12">
+            <div class="col m4">
+              <img class="materialboxed" width="400" src="${doc.data().photo}">
+              <form action="#">
+                <div class="file-field input-field">
+                  <div class="btn">
+                    <span>File</span>
+                    <input type="file">
+                  </div>
+                  <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text">
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="col m8">
+              <div class="row">
+                <form class="col s12">
+                  <div class="row">
+                    <div class="input-field col s10">
+                      <input id="nametoedit" type="text" class="validate" value="${doc.data().name}" required >
+                    </div>
+                    <div class="input-field col s10">
+                      <input id="emailtoedit" type="email" class="validate" value="${doc.data().email}" required>
+                    </div>
+                  </div>
+                  <div class="col s6">
+                      <a id="btnPerfil" class="waves-effect waves-light btn"><i class="material-icons right">send</i>Edit Perfil</a>            
+                  </div>
+                  <div class="col s6">
+                      <a class="waves-effect waves-light btn"><i class="material-icons right">lock</i>Change Pass</a>
+                    </div>
+                </form>
+              </div>
+            </div>
+            </div>`
+            const btnPerfil = document.getElementById('btnPerfil')
+            var refEdit = db.collection("users").doc(id);
+            btnPerfil.addEventListener('click', () => {
+              const nameEditado = document.getElementById('nametoedit').value
+              const emailEditado = document.getElementById('emailtoedit').value
+              return refEdit.update({
+                  name: nameEditado,
+                  mail: emailEditado,
+                  date: new Date(),
+                })
+                .then(function () {
+                  // localStorage.setItem('user', JSON.stringify())
+                  M.toast({
+                    html: `Perfil editado con éxito!`
+                  })
+                  console.log("Document successfully updated!");
+                })
+                .catch(function (error) {
+                  // The document probably doesn't exist.
+                  console.error("Error updating document: ", error);
+                });
+            })
+          }
+          console.log(doc.data().name)
+        })
+      })
+    })
+
+
+    logout.addEventListener('click', funLogOut)
+
 
 
   } // cierre de perfil
